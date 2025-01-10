@@ -44,10 +44,40 @@ export interface Education {
   education: EducationItem[];
 }
 
+export interface SkillItem {
+  id: string;
+  name: string;
+  level: "Beginner" | "Intermediate" | "Advanced" | "Expert";
+  category: string;
+}
+
+export interface Skills {
+  skills: SkillItem[];
+}
+
+export interface ProjectItem {
+  id: string;
+  name: string;
+  description: string;
+  technologies: string[];
+  role: string;
+  url?: string;
+  startDate: string;
+  endDate?: string;
+  current: boolean;
+  highlights: string[];
+}
+
+export interface Projects {
+  projects: ProjectItem[];
+}
+
 export interface ResumeData {
   personalInfo: PersonalInfo;
   professionalSummary?: ProfessionalSummary;
   workExperience?: WorkExperience;
   education?: Education;
+  skills?: Skills;
+  projects?: Projects;
   lastSaved?: Date;
 }

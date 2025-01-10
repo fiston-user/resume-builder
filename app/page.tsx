@@ -2,6 +2,8 @@ import { PersonalInformation } from "./components/forms/PersonalInformation";
 import { ProfessionalSummary } from "./components/forms/ProfessionalSummary";
 import { WorkExperience } from "./components/forms/WorkExperience";
 import { Education } from "./components/forms/Education";
+import { Skills } from "./components/forms/Skills";
+import { Projects } from "./components/forms/Projects";
 import { ResumePreview } from "./components/preview/ResumePreview";
 
 export default function Home() {
@@ -13,6 +15,8 @@ export default function Home() {
           <ProfessionalSummary />
           <WorkExperience />
           <Education />
+          <Skills />
+          <Projects />
         </div>
 
         <div className="sticky top-8">

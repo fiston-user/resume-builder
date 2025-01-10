@@ -58,17 +58,56 @@ export const educationSchema = z.object({
   education: z.array(educationItemSchema).default([]),
 });
 
+export const skillItemSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1, "Skill name is required"),
+  level: z.enum(["Beginner", "Intermediate", "Advanced", "Expert"]),
+  category: z.string().min(1, "Category is required"),
+});
+
+export const skillsSchema = z.object({
+  skills: z.array(skillItemSchema).default([]),
+});
+
+export const projectItemSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1, "Project name is required"),
+  description: z
+    .string()
+    .min(30, "Description should be at least 30 characters")
+    .max(500, "Description should not exceed 500 characters"),
+  technologies: z
+    .array(z.string())
+    .min(1, "At least one technology is required"),
+  role: z.string().min(1, "Role is required"),
+  url: z.string().url("Must be a valid URL").optional(),
+  startDate: z.string().min(1, "Start date is required"),
+  endDate: z.string().optional(),
+  current: z.boolean().default(false),
+  highlights: z.array(z.string()).default([]),
+});
+
+export const projectsSchema = z.object({
+  projects: z.array(projectItemSchema).default([]),
+});
+
 export type PersonalInfo = z.infer<typeof personalInfoSchema>;
 export type ProfessionalSummary = z.infer<typeof professionalSummarySchema>;
 export type WorkExperienceItem = z.infer<typeof workExperienceItemSchema>;
 export type WorkExperience = z.infer<typeof workExperienceSchema>;
 export type EducationItem = z.infer<typeof educationItemSchema>;
 export type Education = z.infer<typeof educationSchema>;
+export type SkillItem = z.infer<typeof skillItemSchema>;
+export type Skills = z.infer<typeof skillsSchema>;
+export type ProjectItem = z.infer<typeof projectItemSchema>;
+export type Projects = z.infer<typeof projectsSchema>;
 
 export interface ResumeData {
   personalInfo: PersonalInfo;
   professionalSummary?: ProfessionalSummary;
   workExperience?: WorkExperience;
   education?: Education;
+  skills?: Skills;
+  projects?: Projects;
   lastSaved?: Date;
 }
