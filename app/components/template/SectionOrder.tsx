@@ -94,7 +94,7 @@ export function SectionOrder() {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      // @ts-ignore
+      // @ts-expect-error
       setSections((items: any[]) => {
         const oldIndex = items.findIndex(
           (item: { id: UniqueIdentifier }) => item.id === active.id

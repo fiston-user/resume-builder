@@ -1,26 +1,25 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import {
+  Education,
   PersonalInfo,
   ProfessionalSummary,
-  WorkExperience,
-  Education,
-  Skills,
   Projects,
+  Skills,
+  WorkExperience,
 } from "@/app/schemas/resume";
-import { loadFromLocalStorage } from "@/lib/localStorage";
-import { useTemplate } from "@/context/TemplateContext";
-import { getTemplateStyles } from "../template/styles";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { useSectionOrder } from "@/context/SectionOrderContext";
+import { useTemplate } from "@/context/TemplateContext";
+import { loadFromLocalStorage } from "@/lib/localStorage";
+import { cn } from "@/lib/utils";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import { Download } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { getTemplateStyles } from "../template/styles";
 
 export function ResumePreview() {
   const targetRef = useRef<HTMLDivElement>(null);

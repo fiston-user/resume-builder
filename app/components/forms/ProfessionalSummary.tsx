@@ -1,18 +1,17 @@
 "use client";
 
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   professionalSummarySchema,
   type ProfessionalSummary,
 } from "@/app/schemas/resume";
-import { loadFromLocalStorage } from "@/lib/localStorage";
-import { useAutoSave } from "@/hooks/useAutoSave";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useAutoSaveContext } from "@/context/AutoSaveContext";
+import { useAutoSave } from "@/hooks/useAutoSave";
+import { loadFromLocalStorage } from "@/lib/localStorage";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
 export function ProfessionalSummary() {
   const { isAutoSaveEnabled } = useAutoSaveContext();

@@ -6,7 +6,7 @@ import { AutoSaveHeader } from "./AutoSaveHeader";
 
 export function AutoSaveHeaderWrapper() {
   const { isAutoSaveEnabled, setAutoSaveEnabled } = useAutoSaveContext();
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
   // Listen for save events from any component
