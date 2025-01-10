@@ -12,6 +12,7 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  UniqueIdentifier,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -93,9 +94,14 @@ export function SectionOrder() {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      setSections((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
+      // @ts-ignore
+      setSections((items: any[]) => {
+        const oldIndex = items.findIndex(
+          (item: { id: UniqueIdentifier }) => item.id === active.id
+        );
+        const newIndex = items.findIndex(
+          (item: { id: UniqueIdentifier }) => item.id === over.id
+        );
 
         return arrayMove(items, oldIndex, newIndex);
       });
