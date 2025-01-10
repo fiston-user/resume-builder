@@ -17,6 +17,9 @@ import {
   Projects,
 } from "@/app/schemas/resume";
 import { loadFromLocalStorage } from "@/lib/localStorage";
+import { useTemplate } from "@/context/TemplateContext";
+import { getTemplateStyles } from "../template/styles";
+import { cn } from "@/lib/utils";
 
 export function ResumePreview() {
   const targetRef = useRef<HTMLDivElement>(null);
@@ -29,6 +32,8 @@ export function ResumePreview() {
   const [education, setEducation] = useState<Education | null>(null);
   const [skills, setSkills] = useState<Skills | null>(null);
   const [projects, setProjects] = useState<Projects | null>(null);
+  const { template, colorScheme } = useTemplate();
+  const styles = getTemplateStyles(template, colorScheme);
 
   useEffect(() => {
     // Initial load
@@ -195,20 +200,18 @@ export function ResumePreview() {
       <CardContent>
         <div
           ref={targetRef}
-          className="space-y-6 print:bg-white print:p-6"
+          className={styles.container}
           style={{
-            maxWidth: "210mm",
-            margin: "0 auto",
             background: "white",
             color: "black",
           }}
         >
           {/* Personal Information */}
-          <div className="print:mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">
+          <div>
+            <h2 className={styles.header.title}>
               {personalInfo.firstName} {personalInfo.lastName}
             </h2>
-            <div className="text-sm text-gray-600 space-y-1">
+            <div className={styles.header.subtitle}>
               <p>{personalInfo.email}</p>
               <p>{personalInfo.phone}</p>
               <p>{personalInfo.location}</p>
@@ -219,11 +222,9 @@ export function ResumePreview() {
           {professionalSummary && professionalSummary.summary && (
             <>
               <Separator />
-              <div>
-                <h3 className="text-lg font-semibold mb-2">
-                  Professional Summary
-                </h3>
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+              <div className={styles.section.container}>
+                <h3 className={styles.section.title}>Professional Summary</h3>
+                <p className={styles.text.muted}>
                   {professionalSummary.summary}
                 </p>
               </div>
@@ -234,13 +235,13 @@ export function ResumePreview() {
           {skills && skills.skills.length > 0 && (
             <>
               <Separator />
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Skills</h3>
+              <div className={styles.section.container}>
+                <h3 className={styles.section.title}>Skills</h3>
                 <div className="space-y-3">
                   {Object.entries(groupedSkills).map(([category, skills]) => (
                     <div key={category}>
                       <h4 className="font-medium text-sm mb-1">{category}</h4>
-                      <p className="text-sm text-gray-600">
+                      <p className={styles.text.muted}>
                         {skills
                           .map((skill) => `${skill.name} (${skill.level})`)
                           .join(" • ")}
@@ -256,25 +257,32 @@ export function ResumePreview() {
           {workExperience && workExperience.experiences.length > 0 && (
             <>
               <Separator />
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Work Experience</h3>
-                <div className="space-y-4">
+              <div className={styles.section.container}>
+                <h3 className={styles.section.title}>Work Experience</h3>
+                <div className={styles.section.content}>
                   {workExperience.experiences.map((experience) => (
                     <div key={experience.id} className="space-y-2">
                       <div>
                         <h4 className="font-medium">{experience.position}</h4>
-                        <p className="text-sm text-muted-foreground">
+                        <p className={styles.text.muted}>
                           {experience.company} • {experience.location}
                         </p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className={styles.text.muted}>
                           {experience.current
                             ? `${experience.startDate} - Present`
                             : `${experience.startDate} - ${experience.endDate}`}
                         </p>
                       </div>
-                      <p className="text-sm">{experience.description}</p>
+                      <p className={styles.text.normal}>
+                        {experience.description}
+                      </p>
                       {experience.highlights.length > 0 && (
-                        <ul className="text-sm list-disc list-inside space-y-1">
+                        <ul
+                          className={cn(
+                            styles.text.normal,
+                            "list-disc list-inside space-y-1"
+                          )}
+                        >
                           {experience.highlights.map((highlight, index) => (
                             <li key={index}>{highlight}</li>
                           ))}
@@ -291,17 +299,17 @@ export function ResumePreview() {
           {education && education.education.length > 0 && (
             <>
               <Separator />
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Education</h3>
-                <div className="space-y-4">
+              <div className={styles.section.container}>
+                <h3 className={styles.section.title}>Education</h3>
+                <div className={styles.section.content}>
                   {education.education.map((edu) => (
                     <div key={edu.id} className="space-y-2">
                       <div>
                         <h4 className="font-medium">{edu.school}</h4>
-                        <p className="text-sm text-muted-foreground">
+                        <p className={styles.text.muted}>
                           {edu.degree} in {edu.field}
                         </p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className={styles.text.muted}>
                           {edu.location} •{" "}
                           {edu.current
                             ? `${edu.startDate} - Present`
@@ -310,10 +318,15 @@ export function ResumePreview() {
                         </p>
                       </div>
                       {edu.description && (
-                        <p className="text-sm">{edu.description}</p>
+                        <p className={styles.text.normal}>{edu.description}</p>
                       )}
                       {edu.achievements.length > 0 && (
-                        <ul className="text-sm list-disc list-inside space-y-1">
+                        <ul
+                          className={cn(
+                            styles.text.normal,
+                            "list-disc list-inside space-y-1"
+                          )}
+                        >
                           {edu.achievements.map((achievement, index) => (
                             <li key={index}>{achievement}</li>
                           ))}
@@ -330,9 +343,9 @@ export function ResumePreview() {
           {projects && projects.projects.length > 0 && (
             <>
               <Separator />
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Projects</h3>
-                <div className="space-y-4">
+              <div className={styles.section.container}>
+                <h3 className={styles.section.title}>Projects</h3>
+                <div className={styles.section.content}>
                   {projects.projects.map((project) => (
                     <div key={project.id} className="space-y-2">
                       <div>
@@ -343,29 +356,45 @@ export function ResumePreview() {
                               href={project.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-sm text-muted-foreground hover:text-primary"
+                              className={cn(
+                                styles.text.muted,
+                                "hover:text-primary"
+                              )}
                             >
                               View Project ↗
                             </a>
                           )}
                         </div>
-                        <p className="text-sm text-muted-foreground">
+                        <p className={styles.text.muted}>
                           {project.role} •{" "}
                           {project.current
                             ? `${project.startDate} - Present`
                             : `${project.startDate} - ${project.endDate}`}
                         </p>
                       </div>
-                      <p className="text-sm">{project.description}</p>
+                      <p className={styles.text.normal}>
+                        {project.description}
+                      </p>
                       <div className="flex flex-wrap gap-2">
                         {project.technologies.map((tech, index) => (
-                          <Badge key={index} variant="secondary">
+                          <span
+                            key={index}
+                            className={cn(
+                              styles.text.normal,
+                              "px-2 py-1 bg-gray-100 rounded"
+                            )}
+                          >
                             {tech}
-                          </Badge>
+                          </span>
                         ))}
                       </div>
                       {project.highlights.length > 0 && (
-                        <ul className="text-sm list-disc list-inside space-y-1">
+                        <ul
+                          className={cn(
+                            styles.text.normal,
+                            "list-disc list-inside space-y-1"
+                          )}
+                        >
                           {project.highlights.map((highlight, index) => (
                             <li key={index}>{highlight}</li>
                           ))}
