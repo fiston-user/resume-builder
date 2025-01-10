@@ -20,6 +20,7 @@ import { loadFromLocalStorage } from "@/lib/localStorage";
 import { useTemplate } from "@/context/TemplateContext";
 import { getTemplateStyles } from "../template/styles";
 import { cn } from "@/lib/utils";
+import { useSectionOrder } from "@/context/SectionOrderContext";
 
 export function ResumePreview() {
   const targetRef = useRef<HTMLDivElement>(null);
@@ -34,6 +35,7 @@ export function ResumePreview() {
   const [projects, setProjects] = useState<Projects | null>(null);
   const { template, colorScheme } = useTemplate();
   const styles = getTemplateStyles(template, colorScheme);
+  const { sections, isSectionVisible } = useSectionOrder();
 
   useEffect(() => {
     // Initial load
@@ -186,6 +188,179 @@ export function ResumePreview() {
       return acc;
     }, {} as Record<string, typeof skills.skills>) || {};
 
+  const sectionComponents = {
+    summary: professionalSummary && professionalSummary.summary && (
+      <>
+        <Separator />
+        <div className={styles.section.container}>
+          <h3 className={styles.section.title}>Professional Summary</h3>
+          <p className={styles.text.muted}>{professionalSummary.summary}</p>
+        </div>
+      </>
+    ),
+    skills: skills && skills.skills.length > 0 && (
+      <>
+        <Separator />
+        <div className={styles.section.container}>
+          <h3 className={styles.section.title}>Skills</h3>
+          <div className="space-y-3">
+            {Object.entries(groupedSkills).map(([category, skills]) => (
+              <div key={category}>
+                <h4 className="font-medium text-sm mb-1">{category}</h4>
+                <p className={styles.text.muted}>
+                  {skills
+                    .map((skill) => `${skill.name} (${skill.level})`)
+                    .join(" • ")}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </>
+    ),
+    experience: workExperience && workExperience.experiences.length > 0 && (
+      <>
+        <Separator />
+        <div className={styles.section.container}>
+          <h3 className={styles.section.title}>Work Experience</h3>
+          <div className={styles.section.content}>
+            {workExperience.experiences.map((experience) => (
+              <div key={experience.id} className="space-y-2">
+                <div>
+                  <h4 className="font-medium">{experience.position}</h4>
+                  <p className={styles.text.muted}>
+                    {experience.company} • {experience.location}
+                  </p>
+                  <p className={styles.text.muted}>
+                    {experience.current
+                      ? `${experience.startDate} - Present`
+                      : `${experience.startDate} - ${experience.endDate}`}
+                  </p>
+                </div>
+                <p className={styles.text.normal}>{experience.description}</p>
+                {experience.highlights.length > 0 && (
+                  <ul
+                    className={cn(
+                      styles.text.normal,
+                      "list-disc list-inside space-y-1"
+                    )}
+                  >
+                    {experience.highlights.map((highlight, index) => (
+                      <li key={index}>{highlight}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </>
+    ),
+    education: education && education.education.length > 0 && (
+      <>
+        <Separator />
+        <div className={styles.section.container}>
+          <h3 className={styles.section.title}>Education</h3>
+          <div className={styles.section.content}>
+            {education.education.map((edu) => (
+              <div key={edu.id} className="space-y-2">
+                <div>
+                  <h4 className="font-medium">{edu.school}</h4>
+                  <p className={styles.text.muted}>
+                    {edu.degree} in {edu.field}
+                  </p>
+                  <p className={styles.text.muted}>
+                    {edu.location} •{" "}
+                    {edu.current
+                      ? `${edu.startDate} - Present`
+                      : `${edu.startDate} - ${edu.endDate}`}
+                    {edu.gpa && ` • GPA: ${edu.gpa}`}
+                  </p>
+                </div>
+                {edu.description && (
+                  <p className={styles.text.normal}>{edu.description}</p>
+                )}
+                {edu.achievements.length > 0 && (
+                  <ul
+                    className={cn(
+                      styles.text.normal,
+                      "list-disc list-inside space-y-1"
+                    )}
+                  >
+                    {edu.achievements.map((achievement, index) => (
+                      <li key={index}>{achievement}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </>
+    ),
+    projects: projects && projects.projects.length > 0 && (
+      <>
+        <Separator />
+        <div className={styles.section.container}>
+          <h3 className={styles.section.title}>Projects</h3>
+          <div className={styles.section.content}>
+            {projects.projects.map((project) => (
+              <div key={project.id} className="space-y-2">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-medium">{project.name}</h4>
+                    {project.url && (
+                      <a
+                        href={project.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(styles.text.muted, "hover:text-primary")}
+                      >
+                        View Project ↗
+                      </a>
+                    )}
+                  </div>
+                  <p className={styles.text.muted}>
+                    {project.role} •{" "}
+                    {project.current
+                      ? `${project.startDate} - Present`
+                      : `${project.startDate} - ${project.endDate}`}
+                  </p>
+                </div>
+                <p className={styles.text.normal}>{project.description}</p>
+                <div className="flex flex-wrap gap-2">
+                  {project.technologies.map((tech, index) => (
+                    <span
+                      key={index}
+                      className={cn(
+                        styles.text.normal,
+                        "px-2 py-1 bg-gray-100 rounded"
+                      )}
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+                {project.highlights.length > 0 && (
+                  <ul
+                    className={cn(
+                      styles.text.normal,
+                      "list-disc list-inside space-y-1"
+                    )}
+                  >
+                    {project.highlights.map((highlight, index) => (
+                      <li key={index}>{highlight}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </>
+    ),
+  };
+
   return (
     <Card className="h-full">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -218,193 +393,12 @@ export function ResumePreview() {
             </div>
           </div>
 
-          {/* Professional Summary */}
-          {professionalSummary && professionalSummary.summary && (
-            <>
-              <Separator />
-              <div className={styles.section.container}>
-                <h3 className={styles.section.title}>Professional Summary</h3>
-                <p className={styles.text.muted}>
-                  {professionalSummary.summary}
-                </p>
-              </div>
-            </>
-          )}
-
-          {/* Skills */}
-          {skills && skills.skills.length > 0 && (
-            <>
-              <Separator />
-              <div className={styles.section.container}>
-                <h3 className={styles.section.title}>Skills</h3>
-                <div className="space-y-3">
-                  {Object.entries(groupedSkills).map(([category, skills]) => (
-                    <div key={category}>
-                      <h4 className="font-medium text-sm mb-1">{category}</h4>
-                      <p className={styles.text.muted}>
-                        {skills
-                          .map((skill) => `${skill.name} (${skill.level})`)
-                          .join(" • ")}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Work Experience */}
-          {workExperience && workExperience.experiences.length > 0 && (
-            <>
-              <Separator />
-              <div className={styles.section.container}>
-                <h3 className={styles.section.title}>Work Experience</h3>
-                <div className={styles.section.content}>
-                  {workExperience.experiences.map((experience) => (
-                    <div key={experience.id} className="space-y-2">
-                      <div>
-                        <h4 className="font-medium">{experience.position}</h4>
-                        <p className={styles.text.muted}>
-                          {experience.company} • {experience.location}
-                        </p>
-                        <p className={styles.text.muted}>
-                          {experience.current
-                            ? `${experience.startDate} - Present`
-                            : `${experience.startDate} - ${experience.endDate}`}
-                        </p>
-                      </div>
-                      <p className={styles.text.normal}>
-                        {experience.description}
-                      </p>
-                      {experience.highlights.length > 0 && (
-                        <ul
-                          className={cn(
-                            styles.text.normal,
-                            "list-disc list-inside space-y-1"
-                          )}
-                        >
-                          {experience.highlights.map((highlight, index) => (
-                            <li key={index}>{highlight}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Education */}
-          {education && education.education.length > 0 && (
-            <>
-              <Separator />
-              <div className={styles.section.container}>
-                <h3 className={styles.section.title}>Education</h3>
-                <div className={styles.section.content}>
-                  {education.education.map((edu) => (
-                    <div key={edu.id} className="space-y-2">
-                      <div>
-                        <h4 className="font-medium">{edu.school}</h4>
-                        <p className={styles.text.muted}>
-                          {edu.degree} in {edu.field}
-                        </p>
-                        <p className={styles.text.muted}>
-                          {edu.location} •{" "}
-                          {edu.current
-                            ? `${edu.startDate} - Present`
-                            : `${edu.startDate} - ${edu.endDate}`}
-                          {edu.gpa && ` • GPA: ${edu.gpa}`}
-                        </p>
-                      </div>
-                      {edu.description && (
-                        <p className={styles.text.normal}>{edu.description}</p>
-                      )}
-                      {edu.achievements.length > 0 && (
-                        <ul
-                          className={cn(
-                            styles.text.normal,
-                            "list-disc list-inside space-y-1"
-                          )}
-                        >
-                          {edu.achievements.map((achievement, index) => (
-                            <li key={index}>{achievement}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Projects */}
-          {projects && projects.projects.length > 0 && (
-            <>
-              <Separator />
-              <div className={styles.section.container}>
-                <h3 className={styles.section.title}>Projects</h3>
-                <div className={styles.section.content}>
-                  {projects.projects.map((project) => (
-                    <div key={project.id} className="space-y-2">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-medium">{project.name}</h4>
-                          {project.url && (
-                            <a
-                              href={project.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={cn(
-                                styles.text.muted,
-                                "hover:text-primary"
-                              )}
-                            >
-                              View Project ↗
-                            </a>
-                          )}
-                        </div>
-                        <p className={styles.text.muted}>
-                          {project.role} •{" "}
-                          {project.current
-                            ? `${project.startDate} - Present`
-                            : `${project.startDate} - ${project.endDate}`}
-                        </p>
-                      </div>
-                      <p className={styles.text.normal}>
-                        {project.description}
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {project.technologies.map((tech, index) => (
-                          <span
-                            key={index}
-                            className={cn(
-                              styles.text.normal,
-                              "px-2 py-1 bg-gray-100 rounded"
-                            )}
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                      {project.highlights.length > 0 && (
-                        <ul
-                          className={cn(
-                            styles.text.normal,
-                            "list-disc list-inside space-y-1"
-                          )}
-                        >
-                          {project.highlights.map((highlight, index) => (
-                            <li key={index}>{highlight}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </>
+          {/* Ordered Sections */}
+          {sections.map(
+            (section) =>
+              isSectionVisible(section.id) && (
+                <div key={section.id}>{sectionComponents[section.id]}</div>
+              )
           )}
         </div>
       </CardContent>
